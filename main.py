@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 from typing import List
-from database.connection import conn
+from database.connection import conn, Settings
 import uvicorn
 
 from routes.users import user_router
@@ -11,6 +11,7 @@ app = FastAPI()
 app.include_router(user_router, prefix="/user")
 app.include_router(event_router, prefix="/event")
 
+settiongs = Settings()
 
 @app.on_event("startup")
 def on_startup():
