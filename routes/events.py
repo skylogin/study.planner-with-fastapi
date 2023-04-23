@@ -29,6 +29,8 @@ async def retrieve_event(id: int, session=Depends(get_session)) -> Event:
     
 @event_router.post("/new")
 async def create_event(new_event: Event, user: str = Depends(authenticate), session=Depends(get_session)) -> dict:
+    new_event.creator = user
+
     session.add(new_event)
     session.commit()
     session.refresh(new_event)
@@ -40,6 +42,13 @@ async def create_event(new_event: Event, user: str = Depends(authenticate), sess
 @event_router.put("/edit/{id}", response_model=Event)
 async def update_event(id: int, new_data: EventUpdate, user: str = Depends(authenticate), session=Depends(get_session)) -> Event:
     event = session.get(Event, id)
+
+    if event.creator != user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Operation not allowed"
+        )
+
     if event:
         event_data = new_data.dict(exclude_unset=True)
         for key, value in event_data.items():
@@ -60,6 +69,12 @@ async def update_event(id: int, new_data: EventUpdate, user: str = Depends(authe
 async def delete_event(id: int, user: str = Depends(authenticate), session=Depends(get_session)) -> dict:
     event = session.get(Event, id)
 
+    if event.creator != user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Operation not allowed"
+        )
+
     if event:
         session.delete(event)
         session.commit()
@@ -71,17 +86,3 @@ async def delete_event(id: int, user: str = Depends(authenticate), session=Depen
         status_code=status.HTTP_404_NOT_FOUND,
         detail="Event with supplied ID does not exist"
     )
-
-@event_router.delete("/")
-async def delete_all_events(user: str = Depends(authenticate), session=Depends(get_session)) -> dict:
-    statement = select(Event)
-    events = session.exec(statement).all()
-
-    for event in events:
-      session.delete(event)
-      
-    session.commit()
-
-    return {
-        "message": "Event deleted successfully."
-    }

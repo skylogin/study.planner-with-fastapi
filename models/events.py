@@ -9,6 +9,7 @@ class Event(SQLModel, table=True):
     description: str
     tags: List[str] = Field(sa_column=Column(JSON))
     location: str
+    creator: Optional[str] = Field(sa_column=Column(JSON))
 
     class Config:
         arbitrary_types_allowed = True

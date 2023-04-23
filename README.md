@@ -11,4 +11,4 @@
 
 ### mongodb docker
 
-`docker run --name mongodb-local -d -p 27017:27017 mongo
+`docker run --name mongodb-local -d -p 27017:27017 mongo`
