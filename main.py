@@ -1,8 +1,10 @@
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
+from fastapi.middleware.cors import CORSMiddleware
 from typing import List
 from database.connection import conn, Settings
 import uvicorn
+
 
 from routes.users import user_router
 from routes.events import event_router
@@ -12,6 +14,16 @@ app.include_router(user_router, prefix="/user")
 app.include_router(event_router, prefix="/event")
 
 settiongs = Settings()
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_method=["*"],
+    allow_headers=["*"]
+)
+
 
 @app.on_event("startup")
 def on_startup():
