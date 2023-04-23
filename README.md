@@ -12,6 +12,19 @@
 `pip install pytest`
 `pip install httpx pytest-asyncio`
 
+`pip install coverage`
+
 ### mongodb docker
 
 `docker run --name mongodb-local -d -p 27017:27017 mongo`
+
+### coverage
+
+`coverage run -m pytest`
+`coverage report`
+`coverage html`
+
+### build
+
+`docker build -t event-planner-api .`
+`docker-compose up -d`
